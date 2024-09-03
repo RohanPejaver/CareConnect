@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "563430287687",
+    "project_id": "care-connect-authentication",
+    "storage_bucket": "care-connect-authentication.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:563430287687:android:2fca5d66e8d2a39d024462",
+        "android_client_info": {
+          "package_name": "com.example.careconnect"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJp5N2qoP7M5rvuEaj2S7Dl4KujVdMxM0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
