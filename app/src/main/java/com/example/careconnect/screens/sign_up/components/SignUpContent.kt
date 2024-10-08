@@ -1,5 +1,6 @@
 package com.example.careconnect.screens.sign_up.components
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -29,6 +30,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.careconnect.R
 import com.example.careconnect.components.EmailField
@@ -37,16 +39,18 @@ import com.example.careconnect.components.Logo
 import com.example.careconnect.components.PasswordField
 import com.example.careconnect.components.UsernameField
 import com.example.careconnect.core.Constants.EMPTY_STRING
-import com.example.careconnect.domain.User
 import com.example.careconnect.navigation.Screen
+import com.example.careconnect.screens.sign_up.SignUpViewModel
 import com.example.careconnect.ui.theme.my_primary
 
 @Composable
 @ExperimentalComposeUiApi
 fun SignUpContent(
-    signUp: (email: String, password: String, username: String) -> Unit,
-    navController: NavController
-) {
+    signUp: (email: String, password: String, username: String, role: String) -> Unit,
+    role: String,
+    navController: NavController,
+    viewModel: SignUpViewModel = hiltViewModel(),
+    ) {
     var username by rememberSaveable(
         stateSaver = TextFieldValue.Saver,
         init = {
@@ -77,6 +81,18 @@ fun SignUpContent(
             )
         }
     )
+
+    fun isEmailValid(email: String): Boolean {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    }
+
+    fun isUsernameValid(username: String): Boolean {
+        return username.length >= 5
+    }
+
+    fun isPasswordValid(password: String): Boolean {
+        return password.length >= 8 && password.any { it.isDigit() }
+    }
 
     val keyboard = LocalSoftwareKeyboardController.current
     val context = LocalContext.current
@@ -159,12 +175,22 @@ fun SignUpContent(
         Button(
             onClick = {
                 keyboard?.hide()
-                signUp(email.text, password.text, username.text)
+                if (!isEmailValid(email.text)) {
+                    Toast.makeText(context, "Invalid email address", Toast.LENGTH_SHORT).show()
+                } else if (!isUsernameValid(username.text)) {
+                    Toast.makeText(context, "Username must be at least 5 characters", Toast.LENGTH_SHORT).show()
+                } else if (!isPasswordValid(password.text)) {
+                    Toast.makeText(context, "Password must be at least 8 characters long and contain a number", Toast.LENGTH_SHORT).show()
+                } else {
+                    // All validations passed
+                    signUp(email.text, password.text, username.text, role)
+                }
             },
             modifier = Modifier
                 .fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(containerColor = my_primary),
-            ) {
+            enabled = isEmailValid(email.text) && isUsernameValid(username.text) && isPasswordValid(password.text)
+        ) {
             Text(
                 text = "Sign Up",
                 color = Color.White
@@ -186,3 +212,4 @@ fun SignUpContent(
         }
     }
 }
+

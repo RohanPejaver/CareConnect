@@ -1,4 +1,4 @@
-package com.example.careconnect.screens.chat
+package com.example.careconnect.screens.support
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
@@ -7,7 +7,7 @@ import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.content
 import kotlinx.coroutines.launch
 
-class ChatViewModel : ViewModel() {
+class SupportViewModel : ViewModel() {
 
     val messageList by lazy {
         mutableStateListOf<MessageModel>()

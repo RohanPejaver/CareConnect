@@ -21,7 +21,7 @@ fun ReloadUser(
             val isUserReloaded = reloadUserResponse.data
             LaunchedEffect(isUserReloaded) {
                 if (isUserReloaded) {
-                    navController.navigate(Screen.Home.route)
+                    navController.navigate(Screen.PatientHome.route)
                 }
             }
         }

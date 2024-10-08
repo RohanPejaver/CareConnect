@@ -63,7 +63,8 @@ import kotlinx.coroutines.launch
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material3.*
+import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.outlined.Chat
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -78,17 +79,18 @@ import com.example.careconnect.components.getReadableLocation
 import com.example.careconnect.components.getUserLocation
 import com.example.careconnect.screens.library.LibraryScreen
 import com.example.careconnect.screens.settings.SettingsScreen
-import com.example.careconnect.screens.chat.SupportScreen
+import com.example.careconnect.screens.support.SupportScreen
 import com.example.careconnect.screens.help.HelpScreen
 import com.example.careconnect.screens.profile.ProfileScreen
-import com.example.careconnect.screens.profile.ProfileViewModel
+import com.example.careconnect.screens.search.SearchScreen
+import com.example.careconnect.screens.search.SearchViewModel
 import com.example.careconnect.ui.theme.my_secondary
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
-fun HomeScreen(
+fun PatientHomeScreen(
     navController: NavHostController,
-    viewModel: ProfileViewModel = hiltViewModel(),
+    viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val user by viewModel.user.collectAsStateWithLifecycle()
 
@@ -153,10 +155,18 @@ fun HomeScreen(
             unselectedIcon = Icons.Outlined.Info,
         ),
         BottomBarItem(
+            id = "chat",
+            title = "Chat",
+            contentDescription = "Go to Chat",
+            screen = Screen.Search,
+            selectedIcon = Icons.Filled.Chat,
+            unselectedIcon = Icons.Outlined.Chat,
+        ),
+        BottomBarItem(
             id = "home",
             title = "Home",
             contentDescription = "Go to Home",
-            screen = Screen.Home,
+            screen = Screen.PatientHome,
             selectedIcon = Icons.Filled.Home,
             unselectedIcon = Icons.Outlined.Home,
         ),
@@ -175,7 +185,7 @@ fun HomeScreen(
             screen = Screen.Settings,
             selectedIcon = Icons.Filled.Settings,
             unselectedIcon = Icons.Outlined.Settings,
-        )
+        ),
     )
 
     var selectedDrawerIndex by rememberSaveable { mutableStateOf(-1) }
@@ -293,10 +303,10 @@ fun HomeScreen(
         ) { innerPadding ->
             NavHost(
                 navController,
-                startDestination = Screen.Home.route,
+                startDestination = Screen.PatientHome.route,
                 Modifier.padding(innerPadding)
             ) {
-                composable(Screen.Home.route) {
+                composable(Screen.PatientHome.route) {
                     LazyColumn(
                         state = lazyListState,
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -343,6 +353,8 @@ fun HomeScreen(
                 composable(Screen.Help.route) { HelpScreen(navController) }
                 composable(Screen.Support.route) { SupportScreen(navController) }
                 composable(Screen.Library.route) { LibraryScreen(navController) }
+                composable(Screen.Search.route) { SearchScreen(viewModel = SearchViewModel()) }
+
             }
         }
     }

@@ -7,33 +7,22 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.careconnect.core.Constants.VERIFY_EMAIL_MESSAGE
 import com.example.careconnect.core.Utils.Companion.showMessage
-import com.example.careconnect.screens.sign_up.components.SendEmailVerification
-import com.example.careconnect.screens.sign_up.components.SignUp
 import com.example.careconnect.screens.sign_up.components.SignUpContent
 
 @Composable
 @ExperimentalComposeUiApi
 fun SignUpScreen(
     viewModel: SignUpViewModel = hiltViewModel(),
-    navController: NavController
+    navController: NavController,
+    role: String,
 ) {
-    val context = LocalContext.current
 
     SignUpContent(
-        signUp = { email, password, username ->
-            viewModel.signUpWithEmailAndPassword(email, password, username)
+        signUp = { email, password, username, role ->
+            viewModel.signUpWithEmailAndPassword(email, password, username, role)
         },
-        navController = navController
+        navController = navController,
+        role = role,
+        viewModel = viewModel
     )
-
-    SignUp(
-        sendEmailVerification = {
-            viewModel.sendEmailVerification()
-        },
-        showVerifyEmailMessage = {
-            showMessage(context, VERIFY_EMAIL_MESSAGE)
-        }
-    )
-
-    SendEmailVerification()
 }

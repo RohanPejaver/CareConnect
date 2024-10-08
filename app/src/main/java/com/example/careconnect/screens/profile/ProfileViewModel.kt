@@ -9,7 +9,7 @@ import com.example.careconnect.domain.AuthRepository
 import com.example.careconnect.domain.ReloadUserResponse
 import com.example.careconnect.domain.Response.*
 import com.example.careconnect.domain.RevokeAccessResponse
-import com.example.careconnect.domain.User
+import com.example.careconnect.model.User
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.firestore

@@ -2,7 +2,7 @@ package com.example.careconnect.screens.home
 
 import androidx.lifecycle.ViewModel
 import com.example.careconnect.domain.AuthRepository
-import com.example.careconnect.domain.User
+import com.example.careconnect.model.User
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.firestore

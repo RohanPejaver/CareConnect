@@ -3,35 +3,32 @@ package com.example.careconnect.navigation
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.careconnect.screens.chat.ChatViewModel
-import com.example.careconnect.screens.chat.ChatScreen
+import androidx.navigation.navArgument
 import com.example.careconnect.screens.choose.ChooseScreen
 import com.example.careconnect.screens.help.HelpScreen
-import com.example.careconnect.screens.home.HomeScreen
 import com.example.careconnect.screens.library.LibraryScreen
 import com.example.careconnect.screens.settings.SettingsScreen
-import com.example.careconnect.screens.sign_up.SignUpScreen
-import com.example.careconnect.screens.chat.SupportScreen
+import com.example.careconnect.screens.support.SupportScreen
 import com.example.careconnect.screens.forgot_password.ForgotPasswordScreen
+import com.example.careconnect.screens.home.DoctorHomeScreen
+import com.example.careconnect.screens.home.PatientHomeScreen
 import com.example.careconnect.screens.sign_in.SignInScreen
 import com.example.careconnect.screens.profile.ProfileScreen
-import com.example.careconnect.screens.sign_up.SignUpViewModel
-import com.example.careconnect.screens.verify_email.VerifyEmailScreen
+import com.example.careconnect.screens.role_selection.RoleScreen
+import com.example.careconnect.screens.search.SearchScreen
+import com.example.careconnect.screens.search.SearchViewModel
+import com.example.careconnect.screens.sign_up.SignUpScreen
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
 fun SetupNavGraph (
     navController : NavHostController,
-    chatViewModel: ChatViewModel,
 ) {
-
-    val viewModel: SignUpViewModel = viewModel()
-
-    NavHost(
+        NavHost(
         navController = navController,
         startDestination = Screen.Choose.route
     ) {
@@ -46,14 +43,32 @@ fun SetupNavGraph (
             SignInScreen(navController = navController)
         }
         composable(
-            route = Screen.Signup.route
+            route = Screen.Role.route
         ) {
-            SignUpScreen(navController = navController)
+            RoleScreen(
+                navController
+            )
         }
         composable(
-            route = Screen.Home.route
+            route = "signup/{role_param}",
+            arguments = listOf(
+                navArgument("role_param") {
+                    type = NavType.StringType
+                }
+            )
         ) {
-            HomeScreen(navController)
+            val roleParam = it.arguments?.getString("role_param") ?: ""
+            SignUpScreen(role = roleParam, navController = navController)
+        }
+        composable(
+            route = Screen.PatientHome.route
+        ) {
+            PatientHomeScreen(navController)
+        }
+        composable(
+            route = Screen.DoctorHome.route
+        ) {
+            DoctorHomeScreen(navController)
         }
         composable(
             route = Screen.Settings.route
@@ -81,19 +96,14 @@ fun SetupNavGraph (
             LibraryScreen(navController)
         }
         composable(
-            route = Screen.Chat.route
-        ) {
-            ChatScreen(navController, viewModel = chatViewModel)
-        }
-        composable(
-            route = Screen.Verify.route
-        ) {
-            VerifyEmailScreen(navigateToHomeScreen = { /*TODO*/ }, navController = navController)
-        }
-        composable(
             route = Screen.Forgot.route
         ) {
             ForgotPasswordScreen(navController = navController)
+        }
+        composable(
+            route = Screen.Search.route
+        ) {
+            SearchScreen(viewModel = SearchViewModel())
         }
     }
 }

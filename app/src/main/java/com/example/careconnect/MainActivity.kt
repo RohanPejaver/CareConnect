@@ -6,17 +6,17 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.careconnect.navigation.Screen
 import com.example.careconnect.navigation.SetupNavGraph
-import com.example.careconnect.screens.chat.ChatViewModel
-import com.google.firebase.Firebase
+import com.example.careconnect.screens.support.SupportViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.firestore
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -30,27 +30,38 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-                val chatViewModel = ViewModelProvider(this)[ChatViewModel::class.java]
+                val supportViewModel = ViewModelProvider(this)[SupportViewModel::class.java]
 
                 navController = rememberNavController()
-                SetupNavGraph(navController = navController, chatViewModel)
+                SetupNavGraph(navController = navController)
                 AuthState()
-
-
         }
     }
 
     @Composable
     private fun AuthState() {
+        val user by viewModel.user.collectAsStateWithLifecycle()
+
         val isUserSignedOut = viewModel.getAuthState().collectAsState().value
         if (isUserSignedOut) {
             NavigateToChooseScreen()
         } else {
-            if (viewModel.isEmailVerified) {
-                NavigateToHomeScreen()
-            } else {
-                NavigateToVerifyEmailScreen()
+            if (user?.role.equals("patient")) {
+                NavigateToPatientHomeScreen()
             }
+            else if(user?.role.equals("doctor")) {
+                NavigateToDoctorHomeScreen()
+            }
+            else {
+
+            }
+        }
+    }
+
+    @Composable
+    private fun NavigateToVerifyEmailScreen() = navController.navigate(Screen.Choose.route) {
+        popUpTo(navController.graph.id) {
+            inclusive = true
         }
     }
 
@@ -62,19 +73,20 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    private fun NavigateToHomeScreen() = navController.navigate(Screen.Home.route) {
+    private fun NavigateToPatientHomeScreen() = navController.navigate(Screen.PatientHome.route) {
         popUpTo(navController.graph.id) {
             inclusive = true
         }
     }
 
     @Composable
-    private fun NavigateToVerifyEmailScreen() = navController.navigate(Screen.Verify.route) {
+    private fun NavigateToDoctorHomeScreen() = navController.navigate(Screen.DoctorHome.route) {
         popUpTo(navController.graph.id) {
             inclusive = true
         }
     }
 }
+
 
 
 

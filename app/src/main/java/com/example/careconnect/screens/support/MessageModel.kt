@@ -1,4 +1,4 @@
-package com.example.careconnect.screens.chat
+package com.example.careconnect.screens.support
 
 data class MessageModel(
     val message : String,

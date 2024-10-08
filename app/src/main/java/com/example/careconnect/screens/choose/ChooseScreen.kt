@@ -137,7 +137,7 @@ fun ChooseScreen(
                 Spacer(modifier = Modifier.size(24.dp))
                 Button(
                     onClick = {
-                        navController.navigate(Screen.Signup.route)
+                        navController.navigate(Screen.Role.route)
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1F9CFF)),
                     modifier = Modifier

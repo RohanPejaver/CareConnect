@@ -15,7 +15,7 @@ import javax.inject.Singleton
 import com.example.careconnect.domain.AuthRepository
 import com.example.careconnect.domain.Response.Success
 import com.example.careconnect.domain.Response.Failure
-import com.example.careconnect.domain.User
+import com.example.careconnect.model.User
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 
@@ -28,17 +28,12 @@ class AuthRepositoryImpl @Inject constructor(
     override val currentUser get() = auth.currentUser
 
     override suspend fun firebaseSignUpWithEmailAndPassword(
-        email: String, password: String, username : String
+        email: String, password: String, username : String, role: String
     ) = try {
-        auth.createUserWithEmailAndPassword(email, password).await()
-        addUserData(username, email)
-        Success(true)
-    } catch (e: Exception) {
-        Failure(e)
-    }
+        val auth = FirebaseAuth.getInstance()
 
-    override suspend fun sendEmailVerification() = try {
-        auth.currentUser?.sendEmailVerification()?.await()
+        auth.createUserWithEmailAndPassword(email, password).await()
+        addUserData(username, email, role)
         Success(true)
     } catch (e: Exception) {
         Failure(e)
@@ -86,20 +81,32 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), auth.currentUser == null)
 
-    private fun addUserData(email: String, username: String) {
-        val user = User(email, username)
-        val auth = FirebaseAuth.getInstance()
+    private fun addUserData(email: String, username: String, role: String) {
         val uid = auth.currentUser?.uid
+        val user = User(email, username, role, userId = uid.toString(), connectionId = uid.toString().substring(6,12))
 
         if (uid != null) {
-            db.collection("users").document(uid)
-                .set(user).addOnSuccessListener {
+            db.collection("users")
+                .document(uid)
+                .set(user)
+                .addOnSuccessListener {
+                    Log.d(TAG, "SUCCESS")
+                }.addOnFailureListener { e ->
+                    Log.d(TAG, "$e FAil")
+                }
+
+            db.collection("chats")
+                .document(uid)
+                .collection("connections")
+                .document(uid)
+                .set(user)
+                .addOnSuccessListener {
                     Log.d(TAG, "SUCCESS")
                 }.addOnFailureListener { e ->
                     Log.d(TAG, "$e FAil")
                 }
         } else {
-            Log.d(TAG, "FAiiiiil")
+            Log.d(TAG, "FAIL")
         }
     }
 }

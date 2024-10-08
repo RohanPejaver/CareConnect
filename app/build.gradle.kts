@@ -71,6 +71,7 @@ dependencies {
     implementation("com.google.firebase:firebase-crashlytics-buildtools:3.0.2")
     implementation("com.google.firebase:firebase-storage:21.0.0")
     implementation("com.google.firebase:firebase-firestore-ktx:25.0.0")
+    implementation("androidx.compose.runtime:runtime-livedata:1.7.2")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -133,6 +134,8 @@ dependencies {
     //Firebase
     implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
     implementation("com.google.firebase:firebase-auth-ktx")
+    //Timeago
+    implementation("com.github.marlonlom:timeago:4.0.3")
 
     android {
         buildFeatures {

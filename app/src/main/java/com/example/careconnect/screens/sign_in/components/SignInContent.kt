@@ -148,7 +148,7 @@ fun SignInContent(
                     color = Color.Black,
                     fontWeight = FontWeight.Bold
                 )
-                TextButton(onClick = { navController.navigate(Screen.Signup.route)}) {
+                TextButton(onClick = { navController.navigate(Screen.Choose.route)}) {
                     androidx.compose.material3.Text(text = "Sign Up", color = Color.White)
                 }
             }

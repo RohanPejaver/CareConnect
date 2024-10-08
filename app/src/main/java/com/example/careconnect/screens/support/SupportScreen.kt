@@ -1,4 +1,4 @@
-package com.example.careconnect.screens.chat
+package com.example.careconnect.screens.support
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -6,8 +6,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import com.example.careconnect.screens.chat.ChatViewModel
-import com.example.careconnect.screens.chat.ChatScreen
 
 @Composable
 fun SupportScreen(
@@ -18,7 +16,7 @@ fun SupportScreen(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        ChatScreen(navController = navController, viewModel = ChatViewModel(), modifier = Modifier.fillMaxSize())
+        SupportContent(navController = navController, viewModel = SupportViewModel(), modifier = Modifier.fillMaxSize())
 
     }
 }

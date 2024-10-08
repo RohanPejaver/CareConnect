@@ -1,4 +1,4 @@
-package com.example.careconnect.screens.chat
+package com.example.careconnect.screens.support
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -38,20 +38,18 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.careconnect.R
 import com.example.careconnect.ui.theme.my_primary
 import com.example.careconnect.ui.theme.my_secondary
 
 @Composable
-fun ChatScreen(
+fun SupportContent(
     navController : NavController,
     modifier : Modifier = Modifier,
-    viewModel : ChatViewModel
+    viewModel : SupportViewModel
 ) {
     Column(
         modifier = modifier
@@ -230,10 +228,4 @@ fun WarningCard() {
             Text(text = "IF YOU HAVE AN EMERGENCY, CALL 911 IMMEDIATELY", color = Color.White)
         }
     }
-}
-
-@Preview
-@Composable
-fun PreviewChatScreen() {
-    ChatScreen(navController = rememberNavController(), viewModel = ChatViewModel())
 }

@@ -28,7 +28,8 @@ fun ProfileScreen(
             viewModel.deleteAccount()
         },
         username = "${user?.username}",
-        email = "${user?.email}"
+        email = "${user?.email}",
+        connectionId = "${user?.connectionId}"
     )
 
     RevokeAccess(

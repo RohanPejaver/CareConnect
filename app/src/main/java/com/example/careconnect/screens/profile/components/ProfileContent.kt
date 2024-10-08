@@ -28,6 +28,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
@@ -64,7 +65,8 @@ fun ProfileContent(
     signOut: () -> Unit,
     deleteAccount: () -> Unit,
     username: String,
-    email: String
+    email: String,
+    connectionId: String
 ) {
     var selectedImageUri by remember {
         mutableStateOf<Uri?>(null)
@@ -157,9 +159,9 @@ fun ProfileContent(
             onClick = {}
         )
         ProfileInfoItem(
-            icon = Icons.Default.Lock,
-            mainText = "",
-            subText = "",
+            icon = Icons.Default.Add,
+            mainText = "Connection ID (for Chats)",
+            subText = connectionId,
             onClick = {}
         )
         Spacer(Modifier.height(8.dp))
