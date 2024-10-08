@@ -1,13 +1,15 @@
 package com.example.careconnect.screens.search.components
 
-import android.util.Log
-import android.widget.Space
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -31,7 +33,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.careconnect.model.DataState
+import com.example.careconnect.navigation.Screen
 import com.example.careconnect.screens.search.SearchViewModel
 import com.example.careconnect.ui.theme.my_primary
 import com.example.careconnect.ui.theme.my_secondary
@@ -39,19 +43,20 @@ import com.example.careconnect.ui.theme.my_secondary
 @Composable
 fun SearchContent(viewModel: SearchViewModel) {
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize()
+        verticalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier
+            .fillMaxHeight(0.95f)
+            .fillMaxWidth()
     ) {
         SetData(viewModel = viewModel)
-    }
-    Spacer(modifier = Modifier.height(50.dp))
-
-    AddConnection { connectionId ->
-        viewModel.addConnection(connectionId)
+        Row {
+            Spacer(Modifier.fillMaxWidth(0.8f))
+            AddConnection { connectionId ->
+                viewModel.addConnection(connectionId)
+            }
+        }
     }
 }
-
-
 
 @Composable
 fun SetData(viewModel: SearchViewModel) {
@@ -164,10 +169,14 @@ fun AddConnection(onClick: (String) -> Unit) {
 
 @Composable
 fun ShowLazyList(users: MutableList<User>) {
+
     LazyColumn {
         items(users) { user ->
             UserCard(
-                user
+                user,
+                onClick = {
+
+                }
             )
         }
     }

@@ -13,6 +13,7 @@ import com.example.careconnect.model.DataState
 import com.example.careconnect.model.User
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.firestore
@@ -33,6 +34,28 @@ class SearchViewModel @Inject constructor() : ViewModel() {
     var user = _user.asStateFlow()
     val response: MutableState<DataState> = mutableStateOf(DataState.UserEmpty)
 
+    private var _currentUser = MutableStateFlow<User?>(null)
+    var currentUser = _currentUser.asStateFlow()
+
+    init {
+        getUser()
+    }
+
+    private fun getUser() {
+        val db = Firebase.firestore
+        val auth = FirebaseAuth.getInstance()
+        val uid = auth.currentUser?.uid
+
+        if (uid != null) {
+            db.collection("users")
+                .document(uid)
+                .get()
+                .addOnSuccessListener { documentSnapshot ->
+                    _currentUser.value = documentSnapshot.toObject(User::class.java)
+                }
+        }
+    }
+
     init {
         getAllUsers()
     }
@@ -48,7 +71,7 @@ class SearchViewModel @Inject constructor() : ViewModel() {
                 .addOnSuccessListener { querySnapshot ->
                     for (document in querySnapshot) {
                         val user = document.toObject(User::class.java)
-                        if (user != null) {
+                        if (user.userId != uid) {
                             tempList.add(user)
                         }
                     }
@@ -60,7 +83,7 @@ class SearchViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun findUserByConnectionId(connectionId: String, onResult: (User?) -> Unit){
+    private fun findUserByConnectionId(connectionId: String, onResult: (User?) -> Unit){
         val db = FirebaseFirestore.getInstance()
 
         db.collection("users")
@@ -93,6 +116,20 @@ class SearchViewModel @Inject constructor() : ViewModel() {
                         .document(user.userId)
                         .set(user)
                         .addOnSuccessListener {
+                            getAllUsers()
+                            Log.d("SearchViewModel", "Connection added successfully")
+                        }
+                        .addOnFailureListener { e ->
+                            Log.e("SearchViewModel", "Error adding connection", e)
+                        }
+
+                    db.collection("chats")
+                        .document(user.userId)
+                        .collection("connections")
+                        .document(uid)
+                        .set(currentUser)
+                        .addOnSuccessListener {
+                            getAllUsers()
                             Log.d("SearchViewModel", "Connection added successfully")
                         }
                         .addOnFailureListener { e ->
@@ -106,5 +143,4 @@ class SearchViewModel @Inject constructor() : ViewModel() {
             }
         }
     }
-
 }
