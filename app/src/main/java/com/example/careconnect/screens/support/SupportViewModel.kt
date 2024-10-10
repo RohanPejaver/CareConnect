@@ -3,6 +3,7 @@ package com.example.careconnect.screens.support
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.careconnect.model.GeminiModel
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.content
 import kotlinx.coroutines.launch
@@ -10,7 +11,7 @@ import kotlinx.coroutines.launch
 class SupportViewModel : ViewModel() {
 
     val messageList by lazy {
-        mutableStateListOf<MessageModel>()
+        mutableStateListOf<GeminiModel>()
     }
 
     val generativeModel : GenerativeModel = GenerativeModel(
@@ -30,16 +31,16 @@ class SupportViewModel : ViewModel() {
                         }
                     }.toList()
                 )
-                messageList.add(MessageModel(question, "user"))
-                messageList.add(MessageModel("Typing...", "model"))
+                messageList.add(GeminiModel(question, "user"))
+                messageList.add(GeminiModel("Typing...", "model"))
 
                 val response = chat.sendMessage(question)
                 messageList.removeLast()
-                messageList.add(MessageModel(response.text.toString(), "model"))
+                messageList.add(GeminiModel(response.text.toString(), "model"))
             }
             catch (e : Exception) {
                 messageList.removeLast()
-                messageList.add(MessageModel("Error : " +e.message.toString(), "model"))
+                messageList.add(GeminiModel("Error : " +e.message.toString(), "model"))
             }
 
 

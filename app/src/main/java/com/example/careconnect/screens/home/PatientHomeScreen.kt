@@ -77,6 +77,8 @@ import com.example.careconnect.components.DoctorSearchScreen
 import com.example.careconnect.components.HospitalMap
 import com.example.careconnect.components.getReadableLocation
 import com.example.careconnect.components.getUserLocation
+import com.example.careconnect.screens.chat.ChatScreen
+import com.example.careconnect.screens.chat.ChatViewModel
 import com.example.careconnect.screens.library.LibraryScreen
 import com.example.careconnect.screens.settings.SettingsScreen
 import com.example.careconnect.screens.support.SupportScreen
@@ -353,8 +355,13 @@ fun PatientHomeScreen(
                 composable(Screen.Help.route) { HelpScreen(navController) }
                 composable(Screen.Support.route) { SupportScreen(navController) }
                 composable(Screen.Library.route) { LibraryScreen(navController) }
-                composable(Screen.Search.route) { SearchScreen(viewModel = SearchViewModel()) }
-
+                composable(Screen.Search.route) { SearchScreen(viewModel = SearchViewModel(), navController) }
+                composable("chat/{connectionId}") { backStackEntry ->
+                    val connectionId = backStackEntry.arguments?.getString("connectionId")
+                    if (connectionId != null) {
+                        ChatScreen(connectionId, navController, viewModel = ChatViewModel())
+                    }
+                }
             }
         }
     }

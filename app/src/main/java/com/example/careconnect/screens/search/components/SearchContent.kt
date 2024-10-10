@@ -34,21 +34,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.careconnect.model.DataState
-import com.example.careconnect.navigation.Screen
+import com.example.careconnect.model.UserDataState
 import com.example.careconnect.screens.search.SearchViewModel
 import com.example.careconnect.ui.theme.my_primary
 import com.example.careconnect.ui.theme.my_secondary
 
 @Composable
-fun SearchContent(viewModel: SearchViewModel) {
+fun SearchContent(viewModel: SearchViewModel, navController: NavController) {
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
             .fillMaxHeight(0.95f)
             .fillMaxWidth()
     ) {
-        SetData(viewModel = viewModel)
+        SetData(viewModel = viewModel, navController)
         Row {
             Spacer(Modifier.fillMaxWidth(0.8f))
             AddConnection { connectionId ->
@@ -59,9 +58,9 @@ fun SearchContent(viewModel: SearchViewModel) {
 }
 
 @Composable
-fun SetData(viewModel: SearchViewModel) {
+fun SetData(viewModel: SearchViewModel, navController: NavController) {
     when (val result = viewModel.response.value) {
-        is DataState.UserLoading -> {
+        is UserDataState.UserLoading -> {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -69,10 +68,10 @@ fun SetData(viewModel: SearchViewModel) {
                 CircularProgressIndicator()
             }
         }
-        is DataState.UserSuccess -> {
-            ShowLazyList(result.data)
+        is UserDataState.UserSuccess -> {
+            ShowLazyList(result.data, navController)
         }
-        is DataState.UserFailure -> {
+        is UserDataState.UserFailure -> {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -168,14 +167,13 @@ fun AddConnection(onClick: (String) -> Unit) {
 }
 
 @Composable
-fun ShowLazyList(users: MutableList<User>) {
-
+fun ShowLazyList(users: MutableList<User>, navController: NavController) {
     LazyColumn {
         items(users) { user ->
             UserCard(
                 user,
                 onClick = {
-
+                    navController.navigate("chat/${user.connectionId}")
                 }
             )
         }

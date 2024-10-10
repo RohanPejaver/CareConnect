@@ -10,9 +10,9 @@ data class User(
     constructor(): this("", "", "", "", "")
 }
 
-sealed class DataState {
-    class UserSuccess(val data: MutableList<User>) : DataState()
-    class UserFailure(val message: String) : DataState()
-    object UserLoading : DataState()
-    object UserEmpty : DataState()
+sealed class UserDataState {
+    class UserSuccess(val data: MutableList<User>) : UserDataState()
+    class UserFailure(val message: String) : UserDataState()
+    object UserLoading : UserDataState()
+    object UserEmpty : UserDataState()
 }

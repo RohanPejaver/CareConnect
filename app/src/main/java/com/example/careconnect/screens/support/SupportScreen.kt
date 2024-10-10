@@ -16,7 +16,7 @@ fun SupportScreen(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        SupportContent(navController = navController, viewModel = SupportViewModel(), modifier = Modifier.fillMaxSize())
+        SupportContent(viewModel = SupportViewModel(), modifier = Modifier.fillMaxSize())
 
     }
 }

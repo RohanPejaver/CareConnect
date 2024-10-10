@@ -18,7 +18,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.Card
@@ -28,7 +27,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,12 +43,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.careconnect.R
+import com.example.careconnect.model.GeminiModel
 import com.example.careconnect.ui.theme.my_primary
 import com.example.careconnect.ui.theme.my_secondary
 
 @Composable
 fun SupportContent(
-    navController : NavController,
     modifier : Modifier = Modifier,
     viewModel : SupportViewModel
 ) {
@@ -119,7 +117,7 @@ fun MessageInput(
 @Composable
 fun MessageList(
     modifier: Modifier = Modifier,
-    messageList: List<MessageModel>
+    messageList: List<GeminiModel>
 ) {
     if (messageList.isEmpty()) {
         Column(
@@ -162,7 +160,7 @@ fun MessageList(
 
 @Composable
 fun MessageRow(
-    messageModel : MessageModel
+    messageModel : GeminiModel
 ) {
     val isModel = messageModel.role == "model"
 

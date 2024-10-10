@@ -8,6 +8,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.careconnect.screens.chat.ChatScreen
+import com.example.careconnect.screens.chat.ChatViewModel
 import com.example.careconnect.screens.choose.ChooseScreen
 import com.example.careconnect.screens.help.HelpScreen
 import com.example.careconnect.screens.library.LibraryScreen
@@ -61,6 +63,22 @@ fun SetupNavGraph (
             SignUpScreen(role = roleParam, navController = navController)
         }
         composable(
+            route = Screen.Search.route
+        ) {
+            SearchScreen(viewModel = SearchViewModel(), navController)
+        }
+        composable(
+            route = "chat/{connectionId}",
+            arguments = listOf(
+                navArgument("connectionId") {
+                    type = NavType.StringType
+                }
+            )
+        ) {
+            val connectionParam = it.arguments?.getString("connection_param") ?: ""
+            ChatScreen(connectionId = connectionParam, navController = navController, viewModel = ChatViewModel())
+        }
+        composable(
             route = Screen.PatientHome.route
         ) {
             PatientHomeScreen(navController)
@@ -99,11 +117,6 @@ fun SetupNavGraph (
             route = Screen.Forgot.route
         ) {
             ForgotPasswordScreen(navController = navController)
-        }
-        composable(
-            route = Screen.Search.route
-        ) {
-            SearchScreen(viewModel = SearchViewModel())
         }
     }
 }
