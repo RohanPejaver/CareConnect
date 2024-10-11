@@ -16,12 +16,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
-class ChatViewModel @Inject constructor(): ViewModel(){
+class ChatViewModel @Inject constructor(): ViewModel() {
     private val db = Firebase.firestore
-    private val uid = FirebaseAuth.getInstance().currentUser?.uid
+
+    private var _connectedUser = MutableStateFlow<User?>(null)
+    var connectedUser = _connectedUser.asStateFlow()
+    private val connectedUserUid = connectedUser.value?.userId
 
     private var _user = MutableStateFlow<User?>(null)
     var user = _user.asStateFlow()
+    private val uid = FirebaseAuth.getInstance().currentUser?.uid
 
     val response: MutableState<MessageDataState> = mutableStateOf(MessageDataState.MessageEmpty)
 
@@ -44,6 +48,29 @@ class ChatViewModel @Inject constructor(): ViewModel(){
         }
     }
 
+    private fun getUserByConnectionId(connectionId: String, onResult: (User?) -> Unit) {
+        val db = FirebaseFirestore.getInstance()
+
+        db.collection("users")
+            .whereEqualTo("connectionId", connectionId)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                if (!querySnapshot.isEmpty) {
+                    val userDocument = querySnapshot.documents[0]
+                    val user = userDocument.toObject(User::class.java)
+                    _connectedUser.value = userDocument.toObject(User::class.java)
+
+                    onResult(user)
+                } else {
+                    onResult(null)
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e("Firestore", "Error querying users by connectionId", e)
+                onResult(null)
+            }
+    }
+
     init {
         getAllCurrentUserMessages()
     }
@@ -51,10 +78,12 @@ class ChatViewModel @Inject constructor(): ViewModel(){
     private fun getAllCurrentUserMessages() {
         val tempList = mutableListOf<Message>()
         response.value = MessageDataState.MessageLoading
-        if (uid != null) {
+        if (uid != null && connectedUserUid != null) {
             db.collection("chats")
                 .document(uid)
-                .collection("messages")
+                .collection("connections")
+                .document(connectedUserUid)
+                .collection("myMessages")
                 .get()
                 .addOnSuccessListener { querySnapshot ->
                     for (document in querySnapshot) {
@@ -69,58 +98,82 @@ class ChatViewModel @Inject constructor(): ViewModel(){
         }
     }
 
-    private fun findUserByConnectionId(connectionId: String, onResult: (User?) -> Unit){
-        val db = FirebaseFirestore.getInstance()
-
-        db.collection("users")
-            .whereEqualTo("connectionId", connectionId)
-            .get()
-            .addOnSuccessListener { querySnapshot ->
-                if (!querySnapshot.isEmpty) {
-                    val userDocument = querySnapshot.documents[0]
-                    val user = userDocument.toObject(User::class.java)
-
-                    onResult(user)
-                } else {
-                    onResult(null)
-                }
-            }
-            .addOnFailureListener { e ->
-                Log.e("Firestore", "Error querying users by connectionId", e)
-                onResult(null)
-            }
+    init {
+        getAllConnectedUserMessages()
     }
 
-    private fun getAllContactedUserMessages(connectionId: String) {
+    private fun getAllConnectedUserMessages() {
         val tempList = mutableListOf<Message>()
         response.value = MessageDataState.MessageLoading
-
-        findUserByConnectionId(connectionId) { user ->
-            if (user != null) {
-                val db = FirebaseFirestore.getInstance()
-                if (uid != null) {
-                    db.collection("chats")
-                        .document(user.userId)
-                        .collection("connections")
-                        .document(uid)
-                        .collection("messages")
-                        .get()
-                        .addOnSuccessListener { querySnapshot ->
-                            for (document in querySnapshot) {
-                                val message = document.toObject(Message::class.java)
-                                tempList.add(message)
-                            }
-                            response.value = MessageDataState.MessageSuccess(tempList)
-                        }
-                        .addOnFailureListener { exception ->
-                            Log.w(TAG, "Error getting documents: ", exception)
-                        }
-                } else {
-                    Log.e("SearchViewModel", "User ID is null")
+        if (uid != null && connectedUserUid != null) {
+            db.collection("chats")
+                .document(uid)
+                .collection("connections")
+                .document(connectedUserUid)
+                .collection("connectionMessages")
+                .get()
+                .addOnSuccessListener { querySnapshot ->
+                    for (document in querySnapshot) {
+                        val message = document.toObject(Message::class.java)
+                        tempList.add(message)
+                    }
+                    response.value = MessageDataState.MessageSuccess(tempList)
                 }
-            } else {
-                Log.d("SearchViewModel", "User with Connection ID not found")
-            }
+                .addOnFailureListener { exception ->
+                    Log.w(TAG, "Error getting documents: ", exception)
+                }
+        }
+    }
+
+    fun sendMessage(message: Message){
+        if(uid != null && connectedUserUid != null){
+            // Current UID document + myMessage
+            db.collection("chats")
+                .document(uid)
+                .collection("connections")
+                .document(connectedUserUid)
+                .collection("myMessages")
+                .document(message.sentOn.toString())
+                .set(message)
+                .addOnSuccessListener {
+                    Log.i(TAG, "Message Sent Successfully")
+                }
+
+            // Current UID document + connectionMessage
+            db.collection("chats")
+                .document(uid)
+                .collection("connections")
+                .document(connectedUserUid)
+                .collection("connectionMessages")
+                .document(message.sentOn.toString())
+                .set(message)
+                .addOnSuccessListener {
+                    Log.i(TAG, "Message Sent Successfully")
+                }
+
+            // Connection UID document + myMessage (connectedUser's connectionMessage)
+            db.collection("chats")
+                .document(connectedUserUid)
+                .collection("connections")
+                .document(uid)
+                .collection("connectionMessages")
+                .document(message.sentOn.toString())
+                .set(message)
+                .addOnSuccessListener {
+                    Log.i(TAG, "Message Sent Successfully")
+                }
+
+            // Connection UID document + connectionMessage (connectedUser's myMessage)
+            db.collection("chats")
+                .document(connectedUserUid)
+                .collection("connections")
+                .document(uid)
+                .collection("myMessages")
+                .document(message.sentOn.toString())
+                .set(message)
+                .addOnSuccessListener {
+                    Log.i(TAG, "Message Sent Successfully")
+                }
         }
     }
 }

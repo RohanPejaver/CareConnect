@@ -110,7 +110,6 @@ fun MessageInput(
                 contentDescription = "Send your message"
             )
         }
-
     }
 }
 

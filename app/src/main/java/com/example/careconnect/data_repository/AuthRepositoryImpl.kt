@@ -105,6 +105,7 @@ class AuthRepositoryImpl @Inject constructor(
                 }.addOnFailureListener { e ->
                     Log.d(TAG, "$e FAil")
                 }
+
         } else {
             Log.d(TAG, "FAIL")
         }
