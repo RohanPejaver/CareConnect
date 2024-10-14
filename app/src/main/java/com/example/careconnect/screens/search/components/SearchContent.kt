@@ -65,7 +65,7 @@ fun SetData(viewModel: SearchViewModel, navController: NavController) {
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator()
+                CircularProgressIndicator(color = my_secondary)
             }
         }
         is UserDataState.UserSuccess -> {

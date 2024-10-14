@@ -2,9 +2,13 @@ package com.example.careconnect.screens.chat
 
 import android.util.Log
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.careconnect.core.Constants.TAG
+import com.example.careconnect.model.GeminiModel
 import com.example.careconnect.model.Message
 import com.example.careconnect.model.MessageDataState
 import com.example.careconnect.model.User
@@ -27,7 +31,15 @@ class ChatViewModel @Inject constructor(): ViewModel() {
     var user = _user.asStateFlow()
     private val uid = FirebaseAuth.getInstance().currentUser?.uid
 
-    val response: MutableState<MessageDataState> = mutableStateOf(MessageDataState.MessageEmpty)
+    val currentUserResponse: MutableState<MessageDataState> = mutableStateOf(MessageDataState.MessageEmpty)
+    val connectedUserResponse: MutableState<MessageDataState> = mutableStateOf(MessageDataState.MessageEmpty)
+
+    private val _currentUserMessages = MutableLiveData<List<Message>>()
+    val currentUserMessages: LiveData<List<Message>> get() = _currentUserMessages
+
+    private val _connectedUserMessages = MutableLiveData<List<Message>>()
+    val connectedUserMessages: LiveData<List<Message>> get() = _connectedUserMessages
+
 
     init {
         getUser()
@@ -48,36 +60,13 @@ class ChatViewModel @Inject constructor(): ViewModel() {
         }
     }
 
-    private fun getUserByConnectionId(connectionId: String, onResult: (User?) -> Unit) {
-        val db = FirebaseFirestore.getInstance()
-
-        db.collection("users")
-            .whereEqualTo("connectionId", connectionId)
-            .get()
-            .addOnSuccessListener { querySnapshot ->
-                if (!querySnapshot.isEmpty) {
-                    val userDocument = querySnapshot.documents[0]
-                    val user = userDocument.toObject(User::class.java)
-                    _connectedUser.value = userDocument.toObject(User::class.java)
-
-                    onResult(user)
-                } else {
-                    onResult(null)
-                }
-            }
-            .addOnFailureListener { e ->
-                Log.e("Firestore", "Error querying users by connectionId", e)
-                onResult(null)
-            }
-    }
-
     init {
         getAllCurrentUserMessages()
     }
 
-    private fun getAllCurrentUserMessages() {
+    fun getAllCurrentUserMessages() {
         val tempList = mutableListOf<Message>()
-        response.value = MessageDataState.MessageLoading
+        currentUserResponse.value = MessageDataState.MessageLoading
         if (uid != null && connectedUserUid != null) {
             db.collection("chats")
                 .document(uid)
@@ -90,7 +79,8 @@ class ChatViewModel @Inject constructor(): ViewModel() {
                         val message = document.toObject(Message::class.java)
                         tempList.add(message)
                     }
-                    response.value = MessageDataState.MessageSuccess(tempList)
+                    _currentUserMessages.value = tempList
+                    currentUserResponse.value = MessageDataState.MessageSuccess(tempList)
                 }
                 .addOnFailureListener { exception ->
                     Log.w(TAG, "Error getting documents: ", exception)
@@ -102,9 +92,9 @@ class ChatViewModel @Inject constructor(): ViewModel() {
         getAllConnectedUserMessages()
     }
 
-    private fun getAllConnectedUserMessages() {
+    fun getAllConnectedUserMessages() {
         val tempList = mutableListOf<Message>()
-        response.value = MessageDataState.MessageLoading
+        connectedUserResponse.value = MessageDataState.MessageLoading
         if (uid != null && connectedUserUid != null) {
             db.collection("chats")
                 .document(uid)
@@ -117,8 +107,8 @@ class ChatViewModel @Inject constructor(): ViewModel() {
                         val message = document.toObject(Message::class.java)
                         tempList.add(message)
                     }
-                    response.value = MessageDataState.MessageSuccess(tempList)
-                }
+                    _connectedUserMessages.value = tempList
+                    connectedUserResponse.value = MessageDataState.MessageSuccess(tempList)                }
                 .addOnFailureListener { exception ->
                     Log.w(TAG, "Error getting documents: ", exception)
                 }

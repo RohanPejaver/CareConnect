@@ -48,27 +48,6 @@ import com.example.careconnect.ui.theme.my_primary
 import com.example.careconnect.ui.theme.my_secondary
 
 @Composable
-fun SupportContent(
-    modifier : Modifier = Modifier,
-    viewModel : SupportViewModel
-) {
-    Column(
-        modifier = modifier
-    ){
-        MessageList(
-            modifier = Modifier
-                .weight(1f),
-            messageList = viewModel.messageList
-        )
-        MessageInput(
-            onMessageSend = {
-                viewModel.sendMessage(it)
-            }
-        )
-    }
-}
-
-@Composable
 fun MessageInput(
     onMessageSend : (String) -> Unit
 ) {
@@ -98,7 +77,7 @@ fun MessageInput(
         )
         IconButton(
             onClick = {
-            if (message.isNotEmpty())
+                if (message.isNotEmpty())
                 {
                     onMessageSend(message)
                     message = ""
@@ -110,6 +89,27 @@ fun MessageInput(
                 contentDescription = "Send your message"
             )
         }
+    }
+}
+
+@Composable
+fun SupportContent(
+    modifier : Modifier = Modifier,
+    viewModel : SupportViewModel
+) {
+    Column(
+        modifier = modifier
+    ){
+        MessageList(
+            modifier = Modifier
+                .weight(1f),
+            messageList = viewModel.messageList
+        )
+        MessageInput(
+            onMessageSend = {
+                viewModel.sendMessage(it)
+            }
+        )
     }
 }
 
