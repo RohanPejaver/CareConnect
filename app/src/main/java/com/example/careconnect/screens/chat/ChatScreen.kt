@@ -10,5 +10,5 @@ fun ChatScreen(
     navController: NavController,
     viewModel: ChatViewModel
 ) {
-
+    ChatContent(viewModel)
 }

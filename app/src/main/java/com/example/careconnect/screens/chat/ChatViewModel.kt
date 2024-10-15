@@ -88,10 +88,6 @@ class ChatViewModel @Inject constructor(): ViewModel() {
         }
     }
 
-    init {
-        getAllConnectedUserMessages()
-    }
-
     fun getAllConnectedUserMessages() {
         val tempList = mutableListOf<Message>()
         connectedUserResponse.value = MessageDataState.MessageLoading

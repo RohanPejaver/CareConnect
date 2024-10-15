@@ -55,7 +55,10 @@ fun ChatContent(viewModel: ChatViewModel) {
 
 @Composable
 fun SetData(viewModel: ChatViewModel) {
-    when (val result = viewModel.connectedUserResponse.value) {
+    viewModel.getAllConnectedUserMessages()
+    viewModel.getAllCurrentUserMessages()
+
+    when (val result = viewModel.currentUserResponse.value) {
         is MessageDataState.MessageLoading -> {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -76,10 +79,20 @@ fun SetData(viewModel: ChatViewModel) {
             }
         }
         is MessageDataState.MessageFailure -> {
-
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = "fail")
+            }
         }
         else -> {
-
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = "idk")
+            }
         }
     }
 }
