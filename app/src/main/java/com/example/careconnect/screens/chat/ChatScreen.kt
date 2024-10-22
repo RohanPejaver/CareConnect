@@ -6,9 +6,8 @@ import androidx.navigation.NavController
 
 @Composable
 fun ChatScreen(
-    connectionId: String,
-    navController: NavController,
+    connectedUserId: String,
     viewModel: ChatViewModel
 ) {
-    ChatContent(viewModel)
+    ChatContent(viewModel, connectedUserId)
 }

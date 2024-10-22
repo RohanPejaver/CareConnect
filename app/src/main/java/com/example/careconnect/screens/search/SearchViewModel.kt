@@ -6,6 +6,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.careconnect.core.Constants.TAG
+import com.example.careconnect.model.Message
 import com.example.careconnect.model.User
 import com.example.careconnect.model.UserDataState
 import com.google.firebase.Firebase
@@ -126,6 +127,36 @@ class SearchViewModel @Inject constructor() : ViewModel() {
                         .collection("connections")
                         .document(uid)
                         .set(inputUser)
+                        .addOnSuccessListener {
+                            getAllUsers()
+                            Log.d("SearchViewModel", "Connection added successfully")
+                        }
+                        .addOnFailureListener { e ->
+                            Log.e("SearchViewModel", "Error adding connection", e)
+                        }
+
+                    db.collection("chats")
+                        .document(uid)
+                        .collection("connections")
+                        .document(uid)
+                        .collection("messages")
+                        .document("example")
+                        .set(Message("This is your first message"))
+                        .addOnSuccessListener {
+                            getAllUsers()
+                            Log.d("SearchViewModel", "Connection added successfully")
+                        }
+                        .addOnFailureListener { e ->
+                            Log.e("SearchViewModel", "Error adding connection", e)
+                        }
+
+                    db.collection("chats")
+                        .document(uid)
+                        .collection("connections")
+                        .document(user.userId)
+                        .collection("messages")
+                        .document("example")
+                        .set(Message("This is your first message"))
                         .addOnSuccessListener {
                             getAllUsers()
                             Log.d("SearchViewModel", "Connection added successfully")

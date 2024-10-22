@@ -1,7 +1,7 @@
 package com.example.careconnect.screens.home
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -60,7 +60,6 @@ import com.example.careconnect.components.Logo
 import com.example.careconnect.navigation.Screen
 import com.example.careconnect.ui.theme.my_primary
 import kotlinx.coroutines.launch
-import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.filled.Chat
@@ -68,25 +67,34 @@ import androidx.compose.material.icons.outlined.Chat
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import com.example.careconnect.components.DoctorSearchScreen
-import com.example.careconnect.components.HospitalMap
 import com.example.careconnect.components.getReadableLocation
 import com.example.careconnect.components.getUserLocation
 import com.example.careconnect.screens.chat.ChatScreen
 import com.example.careconnect.screens.chat.ChatViewModel
+import com.example.careconnect.screens.diagnostic.DiagnosticOne
+import com.example.careconnect.screens.diagnostic.DiagnosticThree
+import com.example.careconnect.screens.diagnostic.DiagnosticTwo
+import com.example.careconnect.screens.diagnostic.DiagnosticViewModel
+import com.example.careconnect.screens.diagnostic.ResultScreen
 import com.example.careconnect.screens.library.LibraryScreen
 import com.example.careconnect.screens.settings.SettingsScreen
 import com.example.careconnect.screens.support.SupportScreen
 import com.example.careconnect.screens.help.HelpScreen
+import com.example.careconnect.screens.mental.MentalScreen
+import com.example.careconnect.screens.mental.MentalViewModel
 import com.example.careconnect.screens.profile.ProfileScreen
 import com.example.careconnect.screens.search.SearchScreen
 import com.example.careconnect.screens.search.SearchViewModel
 import com.example.careconnect.ui.theme.my_secondary
+import com.example.careconnect.vaccination.VaccinationScreen
+import com.example.careconnect.vaccination.VaccinationViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
@@ -125,7 +133,7 @@ fun PatientHomeScreen(
             id = "settings",
             title = "Settings",
             contentDescription = "Go to Settings",
-            screen = Screen.Settings,
+            screen = Screen.Vaccination,
             selectedIcon = Icons.Filled.Settings,
             unselectedIcon = Icons.Outlined.Settings,
         ),
@@ -141,7 +149,7 @@ fun PatientHomeScreen(
             id = "help",
             title = "Help",
             contentDescription = "Get More Information",
-            screen = Screen.Help,
+            screen = Screen.Mental,
             selectedIcon = Icons.Filled.Info,
             unselectedIcon = Icons.Outlined.Info,
         )
@@ -176,7 +184,7 @@ fun PatientHomeScreen(
             id = "library",
             title = "Library",
             contentDescription = "Go to Disease Library",
-            screen = Screen.Library,
+            screen = Screen.DiagnosticOne,
             selectedIcon = Icons.AutoMirrored.Filled.MenuBook,
             unselectedIcon = Icons.AutoMirrored.Filled.MenuBook,
         ),
@@ -195,6 +203,8 @@ fun PatientHomeScreen(
 
     val userLocation = getUserLocation(context)
     val readableLocation = getReadableLocation(userLocation.latitude, userLocation.longitude, context)
+
+    val chatViewModel: ChatViewModel = hiltViewModel()
 
     ModalNavigationDrawer(
         gesturesEnabled = drawerState.isOpen,
@@ -317,36 +327,54 @@ fun PatientHomeScreen(
                             .padding(top = 16.dp)
                     ) {
                         item {
-                            Box(modifier = Modifier.fillMaxWidth(0.90f)) {
-                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                    Text(
-                                        text = "Welcome back ${user?.username}!",
-                                        color = my_secondary,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 24.sp
-                                    )
-                                    Spacer(modifier = Modifier.height(12.dp))
-                                    Text(
-                                        text = "Your Current Location : $readableLocation",
-                                        textAlign = TextAlign.Center,
-                                        color = Color.DarkGray
-                                    )
-                                }
-                            }
+                            Text(
+                                text = "Welcome back ${user?.username}!",
+                                color = my_secondary,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 24.sp
+                            )
                         }
                         item { Spacer(modifier = Modifier.height(12.dp)) }
                         item {
-                            AppointmentCard(
-                                onClick = {
-                                    scope.launch { lazyListState.animateScrollToItem(4) }
-                                }
-                            )
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceEvenly
+                            ){
+                                AppointmentCard(
+                                    onClick = {
+                                        scope.launch { lazyListState.animateScrollToItem(4) }
+                                    },
+                                    text = "Find Your Next Appointment"
+                                )
+                                AppointmentCard(
+                                    onClick = {
+                                        navController.navigate(Screen.Library.route)
+                                    },
+                                    text = "Log Your Emotions"
+                                )
+                            }
+                        }
+                        item{ Spacer(modifier = Modifier.height(16.dp))}
+                        item {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceEvenly
+                            ){
+                                AppointmentCard(
+                                    onClick = {
+                                        scope.launch { lazyListState.animateScrollToItem(4) }
+                                    },
+                                    text = "Take a Diagnostic"
+                                )
+                                AppointmentCard(
+                                    onClick = {
+                                        scope.launch { lazyListState.animateScrollToItem(4) }
+                                    },
+                                    text = "Talk to Your Doctors"
+                                )
+                            }
                         }
                         item { Spacer(modifier = Modifier.height(16.dp)) }
-                        item {
-                            HospitalMap()
-                        }
-                        item { Spacer(modifier = Modifier.height(8.dp)) }
                         item { DoctorSearchScreen() }
                     }
                 }
@@ -356,12 +384,23 @@ fun PatientHomeScreen(
                 composable(Screen.Support.route) { SupportScreen(navController) }
                 composable(Screen.Library.route) { LibraryScreen(navController) }
                 composable(Screen.Search.route) { SearchScreen(viewModel = SearchViewModel(), navController) }
-                composable("chat/{connectionId}") { backStackEntry ->
-                    val connectionId = backStackEntry.arguments?.getString("connectionId")
-                    if (connectionId != null) {
-                        ChatScreen(connectionId, navController, viewModel = ChatViewModel())
-                    }
+                composable(
+                    route = "chat/{connectedUserId}",
+                    arguments = listOf(
+                        navArgument("connectedUserId") {
+                            type = NavType.StringType
+                        }
+                    )
+                ) {
+                    val connectedUserId = it.arguments?.getString("connectedUserId") ?: ""
+                    ChatScreen(connectedUserId = connectedUserId, viewModel = chatViewModel)
                 }
+                composable(Screen.DiagnosticOne.route) { DiagnosticOne(viewmodel = DiagnosticViewModel(), navController) }
+                composable(Screen.DiagnosticTwo.route) { DiagnosticTwo(viewmodel = DiagnosticViewModel(), navController) }
+                composable(Screen.DiagnosticThree.route) { DiagnosticThree(viewmodel = DiagnosticViewModel(), navController) }
+                composable(Screen.Result.route) { ResultScreen(viewModel = DiagnosticViewModel(), navController = navController) }
+                composable(Screen.Vaccination.route) { VaccinationScreen(viewModel = VaccinationViewModel())}
+                composable(Screen.Mental.route) { MentalScreen(viewmodel = MentalViewModel())}
             }
         }
     }

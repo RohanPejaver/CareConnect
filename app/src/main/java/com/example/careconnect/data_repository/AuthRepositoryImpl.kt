@@ -15,6 +15,7 @@ import javax.inject.Singleton
 import com.example.careconnect.domain.AuthRepository
 import com.example.careconnect.domain.Response.Success
 import com.example.careconnect.domain.Response.Failure
+import com.example.careconnect.model.Message
 import com.example.careconnect.model.User
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
@@ -106,6 +107,21 @@ class AuthRepositoryImpl @Inject constructor(
                     Log.d(TAG, "$e FAil")
                 }
 
+            db.collection("chats")
+                .document(uid)
+                .collection("connections")
+                .document(uid)
+                .collection("myMessages")
+                .document("example")
+                .set(Message("This is your first chat"))
+
+            db.collection("chats")
+                .document(uid)
+                .collection("connections")
+                .document(uid)
+                .collection("connectionMessages")
+                .document("example")
+                .set(Message("This is your first chat"))
         } else {
             Log.d(TAG, "FAIL")
         }

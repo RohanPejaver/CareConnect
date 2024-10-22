@@ -9,17 +9,18 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.careconnect.model.User
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun UserCard(user: User, onClick : () -> Unit) {
+fun UserCard(user: User, navController: NavController) {
     Card(
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth(),
         elevation = 4.dp,
-        onClick = onClick
+        onClick = { navController.navigate("chat/${user.userId}") }
     ) {
         Column(
             modifier = Modifier.padding(16.dp)

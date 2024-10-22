@@ -4,7 +4,7 @@ import com.google.firebase.firestore.DocumentReference
 
 data class Message(
     var message: String = "",
-    var sentOn: Long = 0,
+    var sentOn: String = "",
     var sentBy: DocumentReference? = null,
     var messageByCurrentUser: Boolean = false
 )

@@ -7,37 +7,44 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.careconnect.ui.theme.dark_white
 import com.example.careconnect.ui.theme.my_secondary
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppointmentCard(
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    text: String
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize(), // Ensure the parent Box takes the full screen size
-        contentAlignment = Alignment.Center // Center the Card within the parent Box
-    ) {
         Card(
             onClick = onClick,
             colors = CardDefaults.cardColors(
-                containerColor = my_secondary // Example color, replace with your secondary color
+                containerColor = dark_white // Example color, replace with your secondary color
             ),
             modifier = Modifier
-                .fillMaxWidth(0.9f)
-                .height(60.dp)
+                .width(180.dp)
+                .height(200.dp)
                 .shadow(elevation = 8.dp) // Add a shadow with elevation
-                .align(alignment = Alignment.Center) // Center the Card horizontally
         ) {
             Box(
                 modifier = Modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center // Center the Text inside the Card
+                    .fillMaxSize()
+                    .padding(8.dp),
+                contentAlignment = Alignment.TopCenter,
             ) {
-                Text(text = "Find Your Next Appointment", color = Color.White)
+                Text(
+                    text = text,
+                    color = my_secondary,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                )
             }
         }
-    }
 }

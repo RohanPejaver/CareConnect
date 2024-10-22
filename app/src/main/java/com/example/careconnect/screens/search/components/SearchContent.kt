@@ -170,12 +170,7 @@ fun AddConnection(onClick: (String) -> Unit) {
 fun ShowLazyList(users: MutableList<User>, navController: NavController) {
     LazyColumn {
         items(users) { user ->
-            UserCard(
-                user,
-                onClick = {
-                    navController.navigate("chat/${user.connectionId}")
-                }
-            )
+            UserCard(user, navController)
         }
     }
 }
