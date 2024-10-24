@@ -20,5 +20,8 @@ sealed class Screen (val route : String) {
     object DiagnosticThree : Screen(route = "diagnostic_three_screen")
     object Result : Screen(route = "result_screen")
     object Vaccination : Screen(route = "vaccination_screen")
-    object Mental : Screen(route = "mental_screen")
+    object About : Screen(route = "about_screen")
+    object Privacy : Screen(route = "privacy_policy_screen")
+    object TC : Screen(route = "terms_and_conditions_screen")
+
 }

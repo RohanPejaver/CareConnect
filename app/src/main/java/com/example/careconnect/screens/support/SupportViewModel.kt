@@ -14,9 +14,9 @@ class SupportViewModel : ViewModel() {
         mutableStateListOf<GeminiModel>()
     }
 
-    val generativeModel : GenerativeModel = GenerativeModel(
+    private val generativeModel : GenerativeModel = GenerativeModel(
         modelName = "gemini-pro",
-        apiKey = "AIzaSyArWsA4exGsRbxdWiiHzN2FTqG7XjpuiD8"
+        apiKey = "AIzaSyBaa2fbMb0R9tQpjdVHAy8v6trjDDky4JI"
     )
 
     fun sendMessage(question : String) {
@@ -42,8 +42,6 @@ class SupportViewModel : ViewModel() {
                 messageList.removeLast()
                 messageList.add(GeminiModel("Error : " +e.message.toString(), "model"))
             }
-
-
         }
     }
 

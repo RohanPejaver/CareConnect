@@ -1,4 +1,4 @@
-package com.example.careconnect.screens.support
+package com.example.careconnect.screens.support.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -41,9 +41,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.example.careconnect.R
 import com.example.careconnect.model.GeminiModel
+import com.example.careconnect.screens.support.SupportViewModel
 import com.example.careconnect.ui.theme.my_primary
 import com.example.careconnect.ui.theme.my_secondary
 
@@ -64,7 +64,7 @@ fun MessageInput(
             modifier = Modifier
                 .weight(1f)
                 .heightIn(min = 56.dp, max = 200.dp),
-            maxLines = 5,
+            maxLines = 1,
             value = message,
             onValueChange = {
                 message = it
@@ -73,7 +73,8 @@ fun MessageInput(
                 cursorColor = my_primary,
                 unfocusedBorderColor = Color.Black,
                 focusedBorderColor = Color.Black
-            )
+            ),
+            placeholder = { Text(text = "Type a message") }
         )
         IconButton(
             onClick = {
@@ -221,7 +222,7 @@ fun WarningCard() {
             containerColor = my_secondary
         ),
         modifier = Modifier
-            .fillMaxWidth(0.95f)
+            .fillMaxWidth(0.98f)
             .height(60.dp)
             .shadow(elevation = 8.dp)
     ) {
@@ -230,7 +231,7 @@ fun WarningCard() {
                 .fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            Text(text = "IF YOU HAVE AN EMERGENCY, CALL 911 IMMEDIATELY", color = Color.White)
+            Text(text = "AI-based tool, not a medical professional—verify before trusting", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
         }
     }
 }

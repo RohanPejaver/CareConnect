@@ -30,7 +30,7 @@ fun HospitalMap() {
     // var location = LatLng(userLocation.latitude, userLocation.longitude)
 
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(LatLng(31.0000, -99.6000), 5f)
+        position = CameraPosition.fromLatLngZoom(LatLng(30.626230, -97.688210), 7f)
     }
 
     GoogleMap(
@@ -39,6 +39,7 @@ fun HospitalMap() {
             .height(300.dp)
             .clip(RoundedCornerShape(15.dp)),
         cameraPositionState = cameraPositionState,
+
 
     ) {
         Clustering(

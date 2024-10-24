@@ -1,10 +1,19 @@
 package com.example.careconnect.screens.sign_in.components
 
-import android.widget.Toast
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
@@ -32,7 +41,6 @@ import androidx.navigation.NavController
 import com.example.careconnect.R
 import com.example.careconnect.components.EmailField
 import com.example.careconnect.components.HeaderTextField
-import com.example.careconnect.components.IconLoginButton
 import com.example.careconnect.components.Logo
 import com.example.careconnect.components.PasswordField
 import com.example.careconnect.core.Constants.EMPTY_STRING
@@ -66,7 +74,7 @@ fun SignInContent(
         }
     )
     val keyboard = LocalSoftwareKeyboardController.current
-    val context = LocalContext.current
+    LocalContext.current
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -172,24 +180,5 @@ fun SignInContent(
             )
         }
         Spacer(modifier = Modifier.weight(1f))
-        IconLoginButton(
-            onImageClick = {index ->
-                when(index){
-                    0 -> {
-                        Toast.makeText(context, "Logged in with Google", Toast.LENGTH_SHORT).show()
-                    }
-                    1 -> {
-                        Toast.makeText(context, "Logged in with Facebook", Toast.LENGTH_SHORT).show()
-                    }
-                    2 -> {
-                        Toast.makeText(context, "Logged in with X", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            },
-            onSignUpClick = { /*TODO*/ },
-            modifier = Modifier
-                .fillMaxSize()
-                .wrapContentSize(align = Alignment.BottomCenter)
-        )
     }
 }

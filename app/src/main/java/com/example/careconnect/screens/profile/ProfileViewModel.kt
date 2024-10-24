@@ -26,8 +26,8 @@ class ProfileViewModel @Inject constructor(
 ): ViewModel() {
     var revokeAccessResponse by mutableStateOf<RevokeAccessResponse>(Success(false))
         private set
-    var reloadUserResponse by mutableStateOf<ReloadUserResponse>(Success(false))
-        private set
+
+    private val auth = FirebaseAuth.getInstance()
 
     private var _user = MutableStateFlow<User?>(null)
     var user = _user.asStateFlow()
@@ -51,17 +51,11 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun reloadUser() = viewModelScope.launch {
-        reloadUserResponse = Loading
-        reloadUserResponse = repo.reloadFirebaseUser()
+    fun signOut() {
+        auth.signOut()
     }
 
-    val isEmailVerified get() = repo.currentUser?.isEmailVerified ?: false
-
-    fun signOut() = repo.signOut()
-
-    fun deleteAccount() = viewModelScope.launch {
-        revokeAccessResponse = Loading
-        revokeAccessResponse = repo.revokeAccess()
+    fun deleteAccount() {
+        auth.currentUser?.delete()
     }
 }

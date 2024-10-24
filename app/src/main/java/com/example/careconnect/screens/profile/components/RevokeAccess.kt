@@ -27,7 +27,7 @@ fun RevokeAccess(
 
     fun showRevokeAccessMessage() = coroutineScope.launch {
         val result = scaffoldState.snackbarHostState.showSnackbar(
-            message = REVOKE_ACCESS_MESSAGE,
+            message = "Your Account Will be Deleted!",
             actionLabel = "Sign out"
         )
         if (result == SnackbarResult.ActionPerformed) {

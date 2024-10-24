@@ -4,14 +4,12 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.core.graphics.rotationMatrix
-import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.careconnect.screens.about.AboutScreen
 import com.example.careconnect.screens.chat.ChatScreen
 import com.example.careconnect.screens.chat.ChatViewModel
 import com.example.careconnect.screens.choose.ChooseScreen
@@ -27,16 +25,16 @@ import com.example.careconnect.screens.support.SupportScreen
 import com.example.careconnect.screens.forgot_password.ForgotPasswordScreen
 import com.example.careconnect.screens.home.DoctorHomeScreen
 import com.example.careconnect.screens.home.PatientHomeScreen
-import com.example.careconnect.screens.mental.MentalScreen
-import com.example.careconnect.screens.mental.MentalViewModel
+import com.example.careconnect.screens.legal.PrivacyPolicyScreen
+import com.example.careconnect.screens.legal.TermsAndConditionsScreen
 import com.example.careconnect.screens.sign_in.SignInScreen
 import com.example.careconnect.screens.profile.ProfileScreen
 import com.example.careconnect.screens.role_selection.RoleScreen
 import com.example.careconnect.screens.search.SearchScreen
 import com.example.careconnect.screens.search.SearchViewModel
 import com.example.careconnect.screens.sign_up.SignUpScreen
-import com.example.careconnect.vaccination.VaccinationScreen
-import com.example.careconnect.vaccination.VaccinationViewModel
+import com.example.careconnect.screens.vaccination.VaccinationScreen
+import com.example.careconnect.screens.vaccination.VaccinationViewModel
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -78,7 +76,7 @@ fun SetupNavGraph (
         composable(
             route = Screen.Search.route
         ) {
-            SearchScreen(viewModel = SearchViewModel(), navController)
+            SearchScreen(viewModel = SearchViewModel(), navController, modifier = Modifier)
         }
         composable(
             route = "chat/{connectedUserId}",
@@ -89,7 +87,11 @@ fun SetupNavGraph (
             )
         ) {
             val connectionParam = it.arguments?.getString("connectedUserId") ?: ""
-            ChatScreen(connectedUserId = connectionParam, viewModel = ChatViewModel())
+            ChatScreen(
+                connectedUserId = connectionParam,
+                viewModel = ChatViewModel(),
+                navController
+            )
         }
         composable(
             route = Screen.PatientHome.route
@@ -154,12 +156,22 @@ fun SetupNavGraph (
         composable(
             route = Screen.Vaccination.route
         ) {
-            VaccinationScreen(viewModel = VaccinationViewModel())
+            VaccinationScreen(viewModel = VaccinationViewModel(), navController)
         }
         composable(
-            route = Screen.Mental.route
+            route = Screen.About.route
         ) {
-            MentalScreen(viewmodel = MentalViewModel())
+            AboutScreen(navController)
+        }
+        composable(
+            route = Screen.Privacy.route
+        ) {
+            PrivacyPolicyScreen(navController)
+        }
+        composable(
+            route = Screen.TC.route
+        ) {
+            TermsAndConditionsScreen(navController)
         }
     }
 }

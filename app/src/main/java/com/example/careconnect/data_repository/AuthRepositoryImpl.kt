@@ -111,17 +111,9 @@ class AuthRepositoryImpl @Inject constructor(
                 .document(uid)
                 .collection("connections")
                 .document(uid)
-                .collection("myMessages")
+                .collection("messages")
                 .document("example")
-                .set(Message("This is your first chat"))
-
-            db.collection("chats")
-                .document(uid)
-                .collection("connections")
-                .document(uid)
-                .collection("connectionMessages")
-                .document("example")
-                .set(Message("This is your first chat"))
+                .set(Message("This is your first message"))
         } else {
             Log.d(TAG, "FAIL")
         }

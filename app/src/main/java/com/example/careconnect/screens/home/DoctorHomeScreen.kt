@@ -1,7 +1,8 @@
 package com.example.careconnect.screens.home
 
+//noinspection UsingMaterialAndMaterial3Libraries
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,10 +11,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.BottomNavigation
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Chat
+import androidx.compose.material.icons.automirrored.outlined.Chat
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
@@ -39,44 +46,45 @@ import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.careconnect.components.Logo
 import com.example.careconnect.navigation.Screen
-import com.example.careconnect.ui.theme.my_primary
-import kotlinx.coroutines.launch
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.icons.filled.Chat
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
-import com.example.careconnect.components.getReadableLocation
-import com.example.careconnect.components.getUserLocation
+import com.example.careconnect.screens.chat.ChatScreen
+import com.example.careconnect.screens.chat.ChatViewModel
+import com.example.careconnect.screens.help.HelpScreen
+import com.example.careconnect.screens.home.components.SetHomeData
+import com.example.careconnect.screens.home.components.SetVaccinationData
+import com.example.careconnect.screens.library.LibraryScreen
+import com.example.careconnect.screens.profile.ProfileScreen
+import com.example.careconnect.screens.search.SearchScreen
+import com.example.careconnect.screens.search.SearchViewModel
 import com.example.careconnect.screens.settings.SettingsScreen
 import com.example.careconnect.screens.support.SupportScreen
-import com.example.careconnect.screens.help.HelpScreen
-import com.example.careconnect.screens.profile.ProfileScreen
+import com.example.careconnect.ui.theme.my_primary
 import com.example.careconnect.ui.theme.my_secondary
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
@@ -104,10 +112,8 @@ fun DoctorHomeScreen(
         val unselectedIcon: ImageVector
     )
 
-    val navController = rememberNavController()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    val context = LocalContext.current
     val lazyListState = rememberLazyListState()
 
     val menuItems = listOf(
@@ -139,12 +145,12 @@ fun DoctorHomeScreen(
 
     val bottomBarItems = listOf(
         BottomBarItem(
-            id = "support",
-            title = "support",
-            contentDescription = "Go to Support",
-            screen = Screen.Support,
-            selectedIcon = Icons.Filled.Info,
-            unselectedIcon = Icons.Outlined.Home,
+            id = "chat",
+            title = "Chat",
+            contentDescription = "Go to Chat",
+            screen = Screen.Search,
+            selectedIcon = Icons.AutoMirrored.Filled.Chat,
+            unselectedIcon = Icons.AutoMirrored.Outlined.Chat,
         ),
         BottomBarItem(
             id = "home",
@@ -153,14 +159,6 @@ fun DoctorHomeScreen(
             screen = Screen.DoctorHome,
             selectedIcon = Icons.Filled.Home,
             unselectedIcon = Icons.Outlined.Home,
-        ),
-        BottomBarItem(
-            id = "settings",
-            title = "Settings",
-            contentDescription = "Go to Settings",
-            screen = Screen.Settings,
-            selectedIcon = Icons.Filled.Settings,
-            unselectedIcon = Icons.Outlined.Settings,
         ),
         BottomBarItem(
             id = "chat",
@@ -172,11 +170,10 @@ fun DoctorHomeScreen(
         )
     )
 
-    var selectedDrawerIndex by rememberSaveable { mutableStateOf(-1) }
-    var selectedBottomBarIndex by rememberSaveable { mutableStateOf(-1) }
+    var selectedDrawerIndex by rememberSaveable { mutableIntStateOf(-1) }
+    var selectedBottomBarIndex by rememberSaveable { mutableIntStateOf(-1) }
 
-    val userLocation = getUserLocation(context)
-    val readableLocation = getReadableLocation(userLocation.latitude, userLocation.longitude, context)
+    val navController = rememberNavController()
 
     ModalNavigationDrawer(
         gesturesEnabled = drawerState.isOpen,
@@ -299,33 +296,39 @@ fun DoctorHomeScreen(
                             .padding(top = 16.dp)
                     ) {
                         item {
-                            Box(modifier = Modifier.fillMaxWidth(0.90f)) {
-                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                    Text(
-                                        text = "Welcome back ${user?.username}!",
-                                        color = my_secondary,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 24.sp
-                                    )
-                                    Spacer(modifier = Modifier.height(12.dp))
-                                    Text(
-                                        text = "Your Current Location : $readableLocation",
-                                        textAlign = TextAlign.Center,
-                                        color = Color.DarkGray
-                                    )
-                                }
-                            }
+                            Text(
+                                text = "Welcome back ${user?.username}!",
+                                color = my_secondary,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 24.sp
+                            )
                         }
                         item { Spacer(modifier = Modifier.height(12.dp)) }
-
+                        item { Text(text = "Your connected patients", fontSize = 20.sp, fontWeight = FontWeight.SemiBold, color = my_primary) }
+                        item { Spacer(modifier = Modifier.height(12.dp)) }
+                        item { SetHomeData(viewModel = HomeViewModel(), navController = navController) }
+                        item { Spacer(modifier = Modifier.height(28.dp)) }
+                        item { Text(text = "Patient Vaccination Details", fontSize = 20.sp, fontWeight = FontWeight.SemiBold, color = my_primary) }
+                        item { SetVaccinationData(viewModel = HomeViewModel(), navController = navController) }
                     }
                 }
                 composable(Screen.Settings.route) { SettingsScreen(navController) }
                 composable(Screen.Profile.route) { ProfileScreen() }
                 composable(Screen.Help.route) { HelpScreen(navController) }
                 composable(Screen.Support.route) { SupportScreen(navController) }
-                composable(Screen.Chat.route) { SupportScreen(navController) }
-
+                composable(Screen.Library.route) { LibraryScreen(navController) }
+                composable(Screen.Search.route) { SearchScreen(viewModel = SearchViewModel(), navController, modifier = Modifier) }
+                composable(
+                    route = "chat/{connectedUserId}",
+                    arguments = listOf(
+                        navArgument("connectedUserId") {
+                            type = NavType.StringType
+                        }
+                    )
+                ) {
+                    val connectedUserId = it.arguments?.getString("connectedUserId") ?: ""
+                    ChatScreen(connectedUserId = connectedUserId, viewModel = ChatViewModel(), navController)
+                }
             }
         }
     }

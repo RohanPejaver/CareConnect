@@ -38,10 +38,9 @@ fun SettingsScreen(
 
         item { ProfileCardUI(navController) }
 
-        item { GeneralOptionsUI() }
+        item { GeneralOptionsUI(navController) }
 
-        item { SupportOptionsUI() }
-
+        item { SupportOptionsUI(navController) }
     }
 }
 
@@ -130,7 +129,7 @@ fun ProfileCardUI(
 
 @ExperimentalMaterialApi
 @Composable
-fun GeneralOptionsUI() {
+fun GeneralOptionsUI(navController: NavController) {
     Column(
         modifier = Modifier
             .padding(horizontal = 20.dp)
@@ -157,7 +156,9 @@ fun GeneralOptionsUI() {
             icon = R.drawable.security_shield,
             mainText = "Privacy Policy",
             subText = "View the privacy policy",
-            onClick = {}
+            onClick = {
+                navController.navigate(Screen.Privacy.route)
+            }
         )
     }
 }
@@ -230,7 +231,7 @@ fun GeneralSettingItem(
 
 @ExperimentalMaterialApi
 @Composable
-fun SupportOptionsUI() {
+fun SupportOptionsUI(navController: NavController) {
     val context = LocalContext.current
 
     Column(
@@ -274,14 +275,14 @@ fun SupportOptionsUI() {
             icon = R.drawable.magnifying_page,
             mainText = "Terms and Conditions",
             onClick = {
-
+                navController.navigate(Screen.TC.route)
             }
         )
         SupportItem(
             icon = R.drawable.logo,
             mainText = "About",
             onClick = {
-
+                navController.navigate(Screen.About.route)
             }
         )
     }

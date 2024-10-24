@@ -156,13 +156,11 @@ fun ProfileContent(
             icon = Icons.Default.Email,
             mainText = "Registered Email",
             subText = email,
-            onClick = {}
         )
         ProfileInfoItem(
             icon = Icons.Default.Add,
             mainText = "Connection ID (for Chats)",
             subText = connectionId,
-            onClick = {}
         )
         Spacer(Modifier.height(8.dp))
         Text(
@@ -200,10 +198,8 @@ fun ProfileInfoItem(
     icon: ImageVector,
     mainText: String,
     subText: String,
-    onClick: () -> Unit
 ) {
     Card(
-        onClick = { onClick() },
         backgroundColor = dark_white,
         modifier = Modifier
             .padding(bottom = 8.dp)
@@ -236,14 +232,14 @@ fun ProfileInfoItem(
                     Text(
                         text = mainText,
                         color = my_secondary,
-                        fontSize = 14.sp,
+                        fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = subText,
                         color = Color.Gray,
-                        fontSize = 10.sp,
+                        fontSize = 12.sp,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.offset(y = (-4).dp)
                     )
@@ -298,14 +294,14 @@ fun ProfileManagementItem(
                     Text(
                         text = mainText,
                         color = my_secondary,
-                        fontSize = 14.sp,
+                        fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = subText,
                         color = Color.Gray,
-                        fontSize = 10.sp,
+                        fontSize = 12.sp,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.offset(y = (-4).dp)
                     )

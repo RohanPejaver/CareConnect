@@ -17,10 +17,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.TextField
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -47,6 +49,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.careconnect.R
+import com.example.careconnect.navigation.Screen
+import com.example.careconnect.screens.settings.HeaderText
+import com.example.careconnect.ui.theme.my_primary
 import com.example.careconnect.ui.theme.my_secondary
 
 @Composable
@@ -69,6 +74,36 @@ fun LibraryScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             item {
+                Text(text = "Wellness", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = my_secondary)
+                Spacer(modifier = Modifier.height(8.dp))
+                TextButton(
+                    onClick = { navController.navigate(Screen.DiagnosticOne.route)}
+                ) {
+                    Text(
+                        text = "Take a General Health Diagnostic",
+                        color = my_secondary,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
+                        textDecoration = TextDecoration.Underline
+                    )
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+                HorizontalDivider(modifier = Modifier.fillMaxWidth(0.9f), thickness = 3.dp, color = my_secondary)
+                Spacer(modifier = Modifier.height(12.dp))
+                TextButton(
+                    onClick = { navController.navigate(Screen.Vaccination.route)}
+                ) {
+                    Text(
+                        text = "Are you up to Date on Your Vaccines?",
+                        color = my_secondary,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
+                        textDecoration = TextDecoration.Underline
+                    )
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+            }
+            item {
                 VaccineCard(
                     navController = navController,
                     onImageClick = { resId ->
@@ -76,13 +111,6 @@ fun LibraryScreen(
                         isImageOverlayVisible = true
                     }
                 )
-            }
-
-            item {
-                DiseaseSearchScreen(onDiseaseClick = { diseaseInfo ->
-                    selectedDiseaseInfo = diseaseInfo
-                    isDiseaseOverlayVisible = true
-                })
             }
         }
 
@@ -114,13 +142,6 @@ fun VaccineCard(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = "Are you up to date on your vaccines?",
-            fontSize = 20.sp,
-            color = my_secondary,
-            fontWeight = FontWeight.Bold
-        )
-        Spacer(modifier = Modifier.height(16.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
@@ -128,13 +149,12 @@ fun VaccineCard(
             Card(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(8.dp)
+                    .padding(10.dp)
                     .shadow(elevation = 8.dp),
                 colors = CardDefaults.cardColors(
                     containerColor = my_secondary
                 ),
             ) {
-                Text("Card 1", modifier = Modifier.padding(16.dp))
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -155,13 +175,12 @@ fun VaccineCard(
             Card(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(8.dp)
+                    .padding(10.dp)
                     .shadow(elevation = 8.dp),
                 colors = CardDefaults.cardColors(
                     containerColor = my_secondary
                 ),
             ) {
-                Text("Card 2", modifier = Modifier.padding(16.dp))
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()

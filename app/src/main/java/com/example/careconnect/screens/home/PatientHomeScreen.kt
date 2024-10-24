@@ -10,17 +10,25 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.BottomNavigation
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.automirrored.filled.MenuBook
+import androidx.compose.material.icons.automirrored.outlined.Chat
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.AddChart
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.AddChart
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.PersonOutline
@@ -40,42 +48,40 @@ import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.careconnect.components.AppointmentCard
-import com.example.careconnect.components.Logo
-import com.example.careconnect.navigation.Screen
-import com.example.careconnect.ui.theme.my_primary
-import kotlinx.coroutines.launch
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.icons.filled.Chat
-import androidx.compose.material.icons.outlined.Chat
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import com.example.careconnect.R
 import com.example.careconnect.components.DoctorSearchScreen
+import com.example.careconnect.components.HomeCard
+import com.example.careconnect.components.HospitalMap
+import com.example.careconnect.components.Logo
 import com.example.careconnect.components.getReadableLocation
 import com.example.careconnect.components.getUserLocation
+import com.example.careconnect.navigation.Screen
+import com.example.careconnect.screens.about.AboutScreen
 import com.example.careconnect.screens.chat.ChatScreen
 import com.example.careconnect.screens.chat.ChatViewModel
 import com.example.careconnect.screens.diagnostic.DiagnosticOne
@@ -83,18 +89,20 @@ import com.example.careconnect.screens.diagnostic.DiagnosticThree
 import com.example.careconnect.screens.diagnostic.DiagnosticTwo
 import com.example.careconnect.screens.diagnostic.DiagnosticViewModel
 import com.example.careconnect.screens.diagnostic.ResultScreen
-import com.example.careconnect.screens.library.LibraryScreen
-import com.example.careconnect.screens.settings.SettingsScreen
-import com.example.careconnect.screens.support.SupportScreen
 import com.example.careconnect.screens.help.HelpScreen
-import com.example.careconnect.screens.mental.MentalScreen
-import com.example.careconnect.screens.mental.MentalViewModel
+import com.example.careconnect.screens.legal.PrivacyPolicyScreen
+import com.example.careconnect.screens.legal.TermsAndConditionsScreen
+import com.example.careconnect.screens.library.LibraryScreen
 import com.example.careconnect.screens.profile.ProfileScreen
 import com.example.careconnect.screens.search.SearchScreen
 import com.example.careconnect.screens.search.SearchViewModel
+import com.example.careconnect.screens.settings.SettingsScreen
+import com.example.careconnect.screens.support.SupportScreen
+import com.example.careconnect.screens.vaccination.VaccinationScreen
+import com.example.careconnect.screens.vaccination.VaccinationViewModel
+import com.example.careconnect.ui.theme.my_primary
 import com.example.careconnect.ui.theme.my_secondary
-import com.example.careconnect.vaccination.VaccinationScreen
-import com.example.careconnect.vaccination.VaccinationViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
@@ -122,7 +130,6 @@ fun PatientHomeScreen(
         val unselectedIcon: ImageVector
     )
 
-    val navController = rememberNavController()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -133,7 +140,7 @@ fun PatientHomeScreen(
             id = "settings",
             title = "Settings",
             contentDescription = "Go to Settings",
-            screen = Screen.Vaccination,
+            screen = Screen.Settings,
             selectedIcon = Icons.Filled.Settings,
             unselectedIcon = Icons.Outlined.Settings,
         ),
@@ -149,7 +156,7 @@ fun PatientHomeScreen(
             id = "help",
             title = "Help",
             contentDescription = "Get More Information",
-            screen = Screen.Mental,
+            screen = Screen.Help,
             selectedIcon = Icons.Filled.Info,
             unselectedIcon = Icons.Outlined.Info,
         )
@@ -158,8 +165,8 @@ fun PatientHomeScreen(
     val bottomBarItems = listOf(
         BottomBarItem(
             id = "support",
-            title = "Support",
-            contentDescription = "Go to Support",
+            title = "CareBot",
+            contentDescription = "Go to CareBot",
             screen = Screen.Support,
             selectedIcon = Icons.Filled.Info,
             unselectedIcon = Icons.Outlined.Info,
@@ -169,8 +176,8 @@ fun PatientHomeScreen(
             title = "Chat",
             contentDescription = "Go to Chat",
             screen = Screen.Search,
-            selectedIcon = Icons.Filled.Chat,
-            unselectedIcon = Icons.Outlined.Chat,
+            selectedIcon = Icons.AutoMirrored.Filled.Chat,
+            unselectedIcon = Icons.AutoMirrored.Outlined.Chat,
         ),
         BottomBarItem(
             id = "home",
@@ -182,11 +189,11 @@ fun PatientHomeScreen(
         ),
         BottomBarItem(
             id = "library",
-            title = "Library",
-            contentDescription = "Go to Disease Library",
-            screen = Screen.DiagnosticOne,
-            selectedIcon = Icons.AutoMirrored.Filled.MenuBook,
-            unselectedIcon = Icons.AutoMirrored.Filled.MenuBook,
+            title = "Wellness",
+            contentDescription = "Go to Disease Wellness",
+            screen = Screen.Library,
+            selectedIcon = Icons.Filled.AddChart,
+            unselectedIcon = Icons.Outlined.AddChart,
         ),
         BottomBarItem(
             id = "settings",
@@ -198,11 +205,13 @@ fun PatientHomeScreen(
         ),
     )
 
-    var selectedDrawerIndex by rememberSaveable { mutableStateOf(-1) }
-    var selectedBottomBarIndex by rememberSaveable { mutableStateOf(-1) }
+    var selectedDrawerIndex by rememberSaveable { mutableIntStateOf(-1) }
+    var selectedBottomBarIndex by rememberSaveable { mutableIntStateOf(-1) }
+
+    val navController = rememberNavController()
 
     val userLocation = getUserLocation(context)
-    val readableLocation = getReadableLocation(userLocation.latitude, userLocation.longitude, context)
+    getReadableLocation(userLocation.latitude, userLocation.longitude, context)
 
     val chatViewModel: ChatViewModel = hiltViewModel()
 
@@ -227,7 +236,9 @@ fun PatientHomeScreen(
                         onClick = {
                             selectedDrawerIndex = index
                             navController.navigate(item.screen.route) {
-                                popUpTo(0)
+                                popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                                launchSingleTop = true
+                                restoreState = true
                             }
                             scope.launch { drawerState.close() }
                         },
@@ -271,7 +282,9 @@ fun PatientHomeScreen(
                     actions = {
                         IconButton(
                             onClick = { navController.navigate(Screen.Profile.route) {
-                                popUpTo(0)
+                                popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                                launchSingleTop = true
+                                restoreState = true
                             }
                         }) {
                             Icon(
@@ -320,6 +333,7 @@ fun PatientHomeScreen(
             ) {
                 composable(Screen.PatientHome.route) {
                     LazyColumn(
+
                         state = lazyListState,
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
@@ -340,17 +354,23 @@ fun PatientHomeScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceEvenly
                             ){
-                                AppointmentCard(
+                                HomeCard(
                                     onClick = {
                                         scope.launch { lazyListState.animateScrollToItem(4) }
                                     },
-                                    text = "Find Your Next Appointment"
+                                    text = "Find Your Next Appointment",
+                                    image = R.drawable.find_doctor
                                 )
-                                AppointmentCard(
+                                HomeCard(
                                     onClick = {
-                                        navController.navigate(Screen.Library.route)
+                                        navController.navigate(Screen.Library.route){
+                                            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                                            launchSingleTop = true
+                                            restoreState = true
+                                        }
                                     },
-                                    text = "Log Your Emotions"
+                                    text = "Check Your Vaccinations",
+                                    image = R.drawable.vaccination_check
                                 )
                             }
                         }
@@ -360,21 +380,33 @@ fun PatientHomeScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceEvenly
                             ){
-                                AppointmentCard(
+                                HomeCard(
                                     onClick = {
-                                        scope.launch { lazyListState.animateScrollToItem(4) }
+                                        navController.navigate(Screen.Library.route){
+                                            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                                            launchSingleTop = true
+                                            restoreState = true
+                                        }
                                     },
-                                    text = "Take a Diagnostic"
+                                    text = "Take a Diagnostic",
+                                    image = R.drawable.diagnostic
                                 )
-                                AppointmentCard(
+                                HomeCard(
                                     onClick = {
-                                        scope.launch { lazyListState.animateScrollToItem(4) }
+                                        navController.navigate(Screen.Search.route){
+                                            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                                            launchSingleTop = true
+                                            restoreState = true
+                                        }
                                     },
-                                    text = "Talk to Your Doctors"
+                                    text = "Talk to Your Doctors",
+                                    image = R.drawable.doctor_chat
                                 )
                             }
                         }
                         item { Spacer(modifier = Modifier.height(16.dp)) }
+                        item { HospitalMap() }
+                        item { Spacer(modifier = Modifier.height(8.dp)) }
                         item { DoctorSearchScreen() }
                     }
                 }
@@ -383,7 +415,7 @@ fun PatientHomeScreen(
                 composable(Screen.Help.route) { HelpScreen(navController) }
                 composable(Screen.Support.route) { SupportScreen(navController) }
                 composable(Screen.Library.route) { LibraryScreen(navController) }
-                composable(Screen.Search.route) { SearchScreen(viewModel = SearchViewModel(), navController) }
+                composable(Screen.Search.route) { SearchScreen(viewModel = SearchViewModel(), navController, modifier = Modifier) }
                 composable(
                     route = "chat/{connectedUserId}",
                     arguments = listOf(
@@ -393,14 +425,16 @@ fun PatientHomeScreen(
                     )
                 ) {
                     val connectedUserId = it.arguments?.getString("connectedUserId") ?: ""
-                    ChatScreen(connectedUserId = connectedUserId, viewModel = chatViewModel)
+                    ChatScreen(connectedUserId = connectedUserId, viewModel = chatViewModel, navController)
                 }
                 composable(Screen.DiagnosticOne.route) { DiagnosticOne(viewmodel = DiagnosticViewModel(), navController) }
                 composable(Screen.DiagnosticTwo.route) { DiagnosticTwo(viewmodel = DiagnosticViewModel(), navController) }
                 composable(Screen.DiagnosticThree.route) { DiagnosticThree(viewmodel = DiagnosticViewModel(), navController) }
                 composable(Screen.Result.route) { ResultScreen(viewModel = DiagnosticViewModel(), navController = navController) }
-                composable(Screen.Vaccination.route) { VaccinationScreen(viewModel = VaccinationViewModel())}
-                composable(Screen.Mental.route) { MentalScreen(viewmodel = MentalViewModel())}
+                composable(Screen.Vaccination.route) { VaccinationScreen(viewModel = VaccinationViewModel(), navController) }
+                composable(Screen.About.route) { AboutScreen(navController)}
+                composable(Screen.Privacy.route) { PrivacyPolicyScreen(navController)}
+                composable(Screen.TC.route) { TermsAndConditionsScreen(navController)}
             }
         }
     }
