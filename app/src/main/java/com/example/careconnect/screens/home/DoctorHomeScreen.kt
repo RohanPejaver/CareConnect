@@ -2,7 +2,11 @@ package com.example.careconnect.screens.home
 
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 //noinspection UsingMaterialAndMaterial3Libraries
@@ -31,6 +36,8 @@ import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.PersonOutline
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -53,8 +60,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -69,6 +78,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.careconnect.R
 import com.example.careconnect.components.Logo
 import com.example.careconnect.navigation.Screen
 import com.example.careconnect.screens.chat.ChatScreen
@@ -308,8 +318,98 @@ fun DoctorHomeScreen(
                         item { Spacer(modifier = Modifier.height(12.dp)) }
                         item { SetHomeData(viewModel = HomeViewModel(), navController = navController) }
                         item { Spacer(modifier = Modifier.height(28.dp)) }
-                        item { Text(text = "Patient Vaccination Details", fontSize = 20.sp, fontWeight = FontWeight.SemiBold, color = my_primary) }
-                        item { SetVaccinationData(viewModel = HomeViewModel(), navController = navController) }
+                        item { Text(text = "Patient Health Details", fontSize = 20.sp, fontWeight = FontWeight.SemiBold, color = my_primary) }
+                        //item { SetVaccinationData(viewModel = HomeViewModel(), navController = navController) }
+                        item {
+                            LazyRow {
+                                item {
+
+                                    Card(
+                                        modifier = Modifier
+                                            .padding(10.dp)
+                                            .shadow(elevation = 8.dp),
+                                        colors = CardDefaults.cardColors(
+                                            containerColor = my_secondary
+                                        ),
+                                    ) {
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(180.dp)
+                                                .padding(bottom = 8.dp)
+                                        ) {
+                                            Column(
+                                                horizontalAlignment = Alignment.CenterHorizontally,
+                                                modifier = Modifier
+                                                    .padding(12.dp)
+                                            ) {
+                                                Spacer(modifier = Modifier.height(12.dp))
+                                                Text(
+                                                    text = "Rohan2",
+                                                    fontWeight = FontWeight.ExtraBold,
+                                                    color = Color.White,
+                                                    fontSize = 20.sp
+                                                )
+                                                Spacer(modifier = Modifier.height(16.dp))
+                                                Text(
+                                                    text = "Age: 38",
+                                                    fontWeight = FontWeight.Bold,
+                                                    color = Color.White,
+                                                    fontSize = 16.sp
+                                                )
+                                                Spacer(modifier = Modifier.height(12.dp))
+                                                Text(
+                                                    text = "Weight: 200",
+                                                    fontWeight = FontWeight.Bold,
+                                                    color = Color.White,
+                                                    fontSize = 16.sp
+                                                )
+                                                Spacer(modifier = Modifier.height(12.dp))
+                                                Text(
+                                                    text = "Gender: Male",
+                                                    fontWeight = FontWeight.Bold,
+                                                    color = Color.White,
+                                                    fontSize = 16.sp
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+
+                                item {
+                                    Card(
+                                        modifier = Modifier
+                                            .padding(10.dp)
+                                            .shadow(elevation = 8.dp),
+                                        colors = CardDefaults.cardColors(
+                                            containerColor = my_secondary
+                                        ),
+                                    ) {
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(180.dp)
+                                                .padding(bottom = 8.dp)
+                                        ) {
+                                            Column (
+                                                horizontalAlignment = Alignment.CenterHorizontally,
+                                                modifier = Modifier
+                                                    .padding(12.dp)
+                                            ){
+                                                Spacer(modifier = Modifier.height(12.dp))
+                                                Text(text = "Rohan", fontWeight = FontWeight.ExtraBold, color = Color.White, fontSize = 20.sp)
+                                                Spacer(modifier = Modifier.height(16.dp))
+                                                Text(text = "Age: 25", fontWeight = FontWeight.Bold, color = Color.White, fontSize = 16.sp)
+                                                Spacer(modifier = Modifier.height(12.dp))
+                                                Text(text = "Weight: 150", fontWeight = FontWeight.Bold, color = Color.White, fontSize = 16.sp)
+                                                Spacer(modifier = Modifier.height(12.dp))
+                                                Text(text = "Gender: Male", fontWeight = FontWeight.Bold, color = Color.White, fontSize = 16.sp)
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
                 composable(Screen.Settings.route) { SettingsScreen(navController) }

@@ -90,7 +90,7 @@ fun ChatContent(
                 )
                 Spacer(modifier = Modifier.weight(0.75f))
                 Text(
-                    text = viewModel.connectedUser.value?.username ?: "Talk With Your Doctor",
+                    text = viewModel.connectedUser.value?.username ?: "Chat",
                     fontWeight = FontWeight.Bold,
                     fontSize = 28.sp,
                     color = my_secondary,
