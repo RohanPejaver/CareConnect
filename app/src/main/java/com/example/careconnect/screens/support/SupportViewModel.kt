@@ -16,7 +16,7 @@ class SupportViewModel : ViewModel() {
 
     private val generativeModel : GenerativeModel = GenerativeModel(
         modelName = "gemini-pro",
-        apiKey = "AIzaSyBaa2fbMb0R9tQpjdVHAy8v6trjDDky4JI"
+        apiKey = ""
     )
 
     fun sendMessage(question : String) {
