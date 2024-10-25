@@ -33,7 +33,7 @@ class DiagnosticViewModel @Inject constructor() : ViewModel() {
 
     private val generativeModel = GenerativeModel(
         modelName = "gemini-pro",
-        apiKey = "AIzaSyBaa2fbMb0R9tQpjdVHAy8v6trjDDky4JI"
+        apiKey = ""
     )
 
     // MutableStateFlow holds the text generation result. Initially, it's null.
